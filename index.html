@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <title>covid wasm</title>
+    <meta charset="utf-8"/>
+		<script src="wasm_exec.js"></script>
+		<script>
+			const go = new Go();
+      let inst;
+			WebAssembly.instantiateStreaming(fetch("lib.wasm"), go.importObject).then(async (result) => {
+        inst = result.instance;
+				await go.run(inst);
+      });
+      
+      //function to update results based on filter change
+      let updateFilter = async function(event) {
+        let menu = event.target;
+        let country = menu.value;
+        let success = update(country);
+        console.log(success)
+      }
+
+		</script>
+  </head>
+  <body>
+    <div id=controls>
+      <label id="country_label" for="country">Country: </label>
+      <select id="country_select" name="country" onchange="updateFilter(event)">
+        <option value="None">Select Country</option>
+        <option value="US">US</option>
+        <option value="France">France</option>
+      </select>
+    </div>
+    <div id=confirmed>
+      <h1>Confirmed</h1>
+      <p id=confdata></p>
+    </div>
+    <div id=deaths>
+      <h1>Deaths</h1>
+      <p id=deathdata></p>
+    </div>
+    <div id=recovered>
+      <h1>Recovered</h1>
+      <p id=recdata></p>
+    </div>
+  </body>
+</html>
